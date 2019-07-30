@@ -65,14 +65,15 @@ app.delete('/usuario', function (req, res) {
 })
   
 app.put('/usuario', function (req, res) {
-    let id = req.body.id;
+    let body = req.body;
+    let id = body.id;
     let usuario = {
-        nombre: req.body.nombre,
-        correo: req.body.correo,
-        password: req.body.password
+        nombre: body.nombre,
+        correo: body.correo,
+        password: body.password
     }
-    if(!id || !usuario) {
-        return res.status(400).send({error: user, message: 'Por favor, provee un usuario y su id'});
+    if(!id || body.nombre === undefined || body.correo === undefined || body.password === undefined) {
+        return res.status(400).send({error: true, message: 'Por favor, provee un usuario y su id'});
     }
 
     connection.query('UPDATE usuarios SET ? WHERE id = ? AND estado=1', [{nombre:usuario.nombre, email: usuario.correo, pass: usuario.password}, id], (err,results,fields) => {
@@ -80,7 +81,5 @@ app.put('/usuario', function (req, res) {
         return res.send({error:false, data:results, message:'Usuario modificado exitosamente'});
     });
 })
-
-//connection.end();
 
 module.exports = app;
